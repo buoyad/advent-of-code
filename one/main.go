@@ -8,6 +8,8 @@ import (
 	"strconv"
 )
 
+/* Merry Christmas! */
+
 func main() {
 	filename := flag.String("captcha", "input", "Path to input file")
 	flag.Parse()
@@ -27,16 +29,11 @@ func main() {
 		fmt.Printf("Error in processing captcha: %s", err)
 	}
 
-	answer := 0
-	totalLength := len(nums)
-	for i := 0; i < totalLength; i++ {
-		if nums[i] == nums[(i+1)%totalLength] {
-			answer += nums[i]
-		}
-	}
-	fmt.Printf("The answer to the captcha is: %d\n", answer)
+	answer := accumulate(nums)
+	fmt.Printf("The answer to the captcha is %d\n", answer)
 }
 
+// Get the entire captcha as a string
 func readCaptcha(filename string) (string, error) {
 	file, err := os.OpenFile(filename, os.O_RDONLY, 0666)
 	if err != nil {
@@ -50,6 +47,7 @@ func readCaptcha(filename string) (string, error) {
 	return string(res), nil
 }
 
+// Process the captcha string into an array of integers
 func processCaptcha(captcha string) ([]int, error) {
 	res := []int{}
 	for _, char := range captcha {
@@ -63,4 +61,17 @@ func processCaptcha(captcha string) ([]int, error) {
 		res = append(res, num)
 	}
 	return res, nil
+}
+
+// Sum all numbers that equal the next element
+// wrap so the last num is next to the first
+func accumulate(nums []int) int {
+	answer := 0
+	totalLength := len(nums)
+	for i := 0; i < totalLength; i++ {
+		if nums[i] == nums[(i+1)%totalLength] {
+			answer += nums[i]
+		}
+	}
+	return answer
 }
